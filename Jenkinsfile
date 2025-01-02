@@ -1,43 +1,51 @@
 pipeline {
     agent any
-    tools {
-        nodejs 'sonarnode'// Use the NodeJS version configured in Jenkins
-    }
+
     environment {
-
-    SONAR_SCANNER_PATH = 'C:\\Program Files\\sonar-scanner-cli-6.2.1.4610-windows-x64\\sonar-scanner-6.2.1.4610-windows-x64\\bin\\sonar-scanner.bat'
-
-        SONAR_TOKEN = credentials('SonarQube-Token-1') // Use a Jenkins credential for the SonarQube token
+        SONARQUBE = 'http://localhost:9000' // Set your SonarQube URL here
+        SONAR_TOKEN = credentials('SONAR_TOKEN') // Use a valid SonarQube token
     }
+
+    tools {
+        // Define your tools here (e.g., Git, Maven)
+        git 'C:\\Program Files\\Git\\bin\\git.exe' // Ensure this path is correct for Git
+        // Maven is optional if you use Maven for building the project
+    }
+
     stages {
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
-                // Pull the code from the GitHub repository
                 checkout scm
             }
         }
+
         stage('Install Dependencies') {
             steps {
-                // Install Node.js dependencies
-                sh 'npm install'
+                // Use bat for Windows-based commands
+                bat 'npm install'  // Replace with your install command, e.g., npm install or mvn install
             }
         }
+
         stage('SonarQube Analysis') {
             steps {
-                // Trigger SonarQube analysis
-                withSonarQubeEnv('SonarQube-Token-1') { // Replace 'SonarQube' with your SonarQube server name in Jenkins
-                    sh 'sonar-scanner -Dsonar.projectKey=Backe \
-                                      -Dsonar.sources=. \
-                                      -Dsonar.host.url=http://localhost:9000 \
-                                      -Dsonar.login=$SONAR_TOKEN'
+                script {
+                    // Ensure SonarQube Scanner is set up correctly
+                    def scannerHome = tool 'SonarQubeScanner' // Ensure the SonarQube Scanner tool is configured
+                    withSonarQubeEnv('SonarQube') {
+                        bat "${scannerHome}\\bin\\sonar-scanner.bat -Dsonar.projectKey=BackEnd -Dsonar.sources=. -Dsonar.host.url=${env.SONARQUBE} -Dsonar.token=${env.SONAR_TOKEN}"
+                    }
                 }
             }
         }
-    }
-    post {
-        success {
-            echo 'Build and SonarQube analysis completed successfully.'
+
+        stage('Post Actions') {
+            steps {
+                echo 'Build or SonarQube analysis completed.'
+            }
         }
+    }
+
+    post {
         failure {
             echo 'Build or SonarQube analysis failed.'
         }
