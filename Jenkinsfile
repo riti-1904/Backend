@@ -36,7 +36,8 @@ pipeline {
             steps {
                 script {
                     echo 'Starting SonarQube analysis...'
-                    bat "mvn sonar:sonar -Dsonar.login=${env.SONAR_TOKEN}"
+                    // Replace the Maven command with SonarQube scanner for npm
+                    bat "sonar-scanner -Dsonar.projectKey=your_project_key -Dsonar.sources=src -Dsonar.host.url=http://your-sonarqube-server -Dsonar.login=${env.SONAR_TOKEN}"
                 }
             }
         }
@@ -56,4 +57,3 @@ pipeline {
         }
     }
 }
-
