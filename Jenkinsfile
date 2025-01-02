@@ -6,7 +6,7 @@ pipeline {
     }
 
     tools {
-        nodejs "NodeJS"  // This refers to the NodeJS installation name configured in Jenkins
+        nodejs "sonarnode"  // This refers to the NodeJS installation name configured in Jenkins
     }
 
     stages {
