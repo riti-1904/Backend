@@ -5,10 +5,13 @@ pipeline {
         SONAR_TOKEN = credentials('SonarQube-Token-1')
     }
 
+    tools {
+        nodejs "NodeJS"  // This refers to the NodeJS installation name configured in Jenkins
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                // Explicitly mention the branch and credentials for the Git checkout
                 git credentialsId: 'github-token-1', branch: 'main', url: 'https://github.com/riti-1904/Backend.git'
             }
         }
@@ -16,8 +19,14 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Ensure npm is available and install dependencies using bat
                     echo 'Installing dependencies...'
+
+                    // Install global npm packages
+                    bat 'npm install -g eslint@7.32.0'  // Example: Install a specific version of eslint globally
+                    bat 'npm install -g nodemon'        // Example: Install nodemon globally
+                    bat 'npm install -g typescript'     // Example: Install typescript globally
+
+                    // Install local project dependencies
                     bat 'npm install'
                 }
             }
@@ -47,3 +56,4 @@ pipeline {
         }
     }
 }
+
