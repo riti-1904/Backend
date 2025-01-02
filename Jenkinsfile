@@ -8,7 +8,8 @@ pipeline {
 
     tools {
         // Define your tools here (e.g., Git, Maven)
-        git 'C:\\Program Files\\Git\\bin\\git.exe'// Ensure this path is correct for Git
+        git 'Git Default'  // This refers to the default tool configured in Jenkins
+// Ensure this path is correct for Git
         // Maven is optional if you use Maven for building the project
     }
 
