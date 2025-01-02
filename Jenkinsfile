@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        // Ensure NodeJS is set in the Global Tool Configuration
-        nodejs 'sonarnode'  // Reference the name of the NodeJS tool you set in Global Tool Configuration
-    }
-
     environment {
         SONAR_TOKEN = credentials('SonarQube-Token-1')
     }
@@ -13,7 +8,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/riti-1904/Backend'
+                // Explicitly mention the branch and credentials for the Git checkout
+                git credentialsId: 'github-token-1', branch: 'main', url: 'https://github.com/riti-1904/Backend.git'
             }
         }
 
