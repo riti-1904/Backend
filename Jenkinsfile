@@ -1,47 +1,46 @@
 pipeline {
     agent any
 
-    environment {
-        SONARQUBE = 'http://localhost:9000' // Set your SonarQube URL here
-        SONAR_TOKEN = credentials('SonarQube-Token-1') // Use a valid SonarQube token
+    tools {
+        // Ensure NodeJS is set in the Global Tool Configuration
+        nodejs 'sonarnode'  // Reference the name of the NodeJS tool you set in Global Tool Configuration
     }
 
-    tools {
-        // Define your tools here (e.g., Git, Maven)
-        git 'Git Default'  // This refers to the default tool configured in Jenkins
-// Ensure this path is correct for Git
-        // Maven is optional if you use Maven for building the project
+    environment {
+        SONAR_TOKEN = credentials('SonarQube-Token-1')
     }
 
     stages {
-        stage('Checkout SCM') {
+        stage('Checkout') {
             steps {
-                checkout scm
+                git 'https://github.com/riti-1904/Backend'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                // Use bat for Windows-based commands
-                bat 'npm install'  // Replace with your install command, e.g., npm install or mvn install
+                script {
+                    // Ensure npm is available and install dependencies using bat
+                    echo 'Installing dependencies...'
+                    bat 'npm install'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    // Ensure SonarQube Scanner is set up correctly
-                    def scannerHome = tool 'SonarQubeScanner' // Ensure the SonarQube Scanner tool is configured
-                    withSonarQubeEnv('SonarQube') {
-                        bat "${scannerHome}\\bin\\sonar-scanner.bat -Dsonar.projectKey=BackEnd -Dsonar.sources=. -Dsonar.host.url=${env.SONARQUBE} -Dsonar.token=${env.SONAR_TOKEN}"
-                    }
+                    echo 'Starting SonarQube analysis...'
+                    bat "mvn sonar:sonar -Dsonar.login=${env.SONAR_TOKEN}"
                 }
             }
         }
 
         stage('Post Actions') {
             steps {
-                echo 'Build or SonarQube analysis completed.'
+                script {
+                    echo 'Build or SonarQube analysis completed.'
+                }
             }
         }
     }
