@@ -8,7 +8,7 @@ pipeline {
 
     tools {
         // Define your tools here (e.g., Git, Maven)
-        git 'C:\\Program Files\\Git\\bin\\git.exe' // Ensure this path is correct for Git
+        git 'C:\\Program Files\\Git\\bin\\git.exe'// Ensure this path is correct for Git
         // Maven is optional if you use Maven for building the project
     }
 
