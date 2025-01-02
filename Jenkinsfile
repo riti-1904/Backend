@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SONARQUBE = 'http://localhost:9000' // Set your SonarQube URL here
-        SONAR_TOKEN = credentials('SONAR_TOKEN') // Use a valid SonarQube token
+        SONAR_TOKEN = credentials('SonarQube-Token-1') // Use a valid SonarQube token
     }
 
     tools {
